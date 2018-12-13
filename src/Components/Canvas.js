@@ -6,51 +6,70 @@ class Canvas extends Component {
   constructor(props){
     super(props);
     this.state = {
+      readyCanvas:false
     };
+
+
 
   }
 
   componentDidMount(){
 
-    var canvasOpts = {
-        backgroundColor: 'white',
-        selection:false,
-      }
-    this.fabricCanvas = new fabric.Canvas(this.props.canvasId, canvasOpts)
-
-
-    
     var img = new Image();
-    img.src = this.props.src
-    img.onload = this.imageHandler(img) 
+    img.src = this.props.src;
+    img.onload = this.fitImage(img)
+
   }
 
-  imageHandler(img){
-       
+  componentDidUpdate(){
 
+  }
 
-      this.fabricCanvas.setWidth(img.width)
-      this.fabricCanvas.setHeight(img.height)
-      this.fabricCanvas.calcOffset()
-      fabric.Image.fromURL(img.src, (oImg)=>{
-            this.fabricCanvas.add(oImg)
-            this.props.registerFabric(this.fabricCanvas);
-      })
+  fitImage(img){
+    //Calculate scale
+    var scale_width = window.innerWidth / img.width;
+    var scale_height = window.innerHeight / img.height;
+    var scale = Math.min(scale_width, scale_height) * .6;
+
+    //Resize
+    var h = img.height * scale;
+    var w = img.width * scale;
+    
+
+    this.fabricCanvas = new fabric.Canvas(this.props.canvasId, 
+      {...this.props.canvasOpts,
+        height: h,
+        width: w})
+    fabric.Image.fromURL(this.props.src, (oImg)=>{
+          oImg.scaleToHeight(h);
+          oImg.scaleToWidth(w);
+          this.fabricCanvas.add(oImg)
+          this.fabricCanvas.renderAll()
+          this.setState({readyCanvas:true}, ()=>{
+            this.props.mountFabric(this.fabricCanvas)
+          })
+          
+          
+
+    })
     
   }
 
   componentWillUnmount() {
   }
 
-  renderMain(){
-    return <canvas ref={this.props.canvasId}
-      id={this.props.canvasId}/>
-  }
 
   render() {
-    const renderMain = this.renderMain()
     return (
-      <ul>{renderMain}</ul>
+      <ul>{(this.state.readyCanvas) ?
+          (<canvas ref={this.props.canvasId}
+      id={this.props.canvasId} styles={{"display":"none"}}/>) : (
+      <canvas ref={this.props.canvasId}
+      id={this.props.canvasId}/>)
+        
+      }</ul>
+
+
     )
   }
 }
