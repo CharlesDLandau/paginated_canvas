@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
+import { BrowserRouter as Router, Redirect,
+  Route, Link, Switch } from "react-router-dom";
 
 import Grid from '@material-ui/core/Grid';
 
@@ -15,8 +17,9 @@ var data = []
 
 imgFolder.map((item, idx)=>{
   // Page numbers are not typically zero-base,
-  // but this can be handled in the view as an alternative
-  data.push({item: item, pageNum:idx+1})
+  // but this can be handled in the view
+  data.push({item: item, pageNum:idx})
+  return
 })
 
 
@@ -31,8 +34,9 @@ class App extends Component {
       <Grid container alignItems="stretch"
       direction="row"
       justify="center">
-      <View imgFolder={imgFolder}
-      data={data} />
+      <Router>
+      <View
+      data={data} /></Router>
 
       </Grid>
       </div>

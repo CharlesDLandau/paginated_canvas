@@ -10,19 +10,24 @@ class Canvas extends Component {
     };
 
 
-
   }
 
   componentDidMount(){
 
     var img = new Image();
+    img.validate="always"
     img.src = this.props.src;
-    img.onload = this.fitImage(img)
+    img.onload = ()=> {this.fitImage(img)}
+    img.onerror = (e) => {this.handleImgLoadError(e)}
 
   }
 
   componentDidUpdate(){
 
+  }
+
+  handleImgLoadError(e){
+    console.log(e)
   }
 
   fitImage(img){
@@ -39,19 +44,14 @@ class Canvas extends Component {
     this.fabricCanvas = new fabric.Canvas(this.props.canvasId, 
       {...this.props.canvasOpts,
         height: h,
-        width: w})
-    fabric.Image.fromURL(this.props.src, (oImg)=>{
-          oImg.scaleToHeight(h);
-          oImg.scaleToWidth(w);
-          this.fabricCanvas.add(oImg)
-          this.fabricCanvas.renderAll()
-          this.setState({readyCanvas:true}, ()=>{
-            this.props.mountFabric(this.fabricCanvas)
-          })
-          
-          
+        width: w,
+      })
 
-    })
+    fabric.Image.fromURL(this.props.src, (oImg)=>{
+        this.setState({readyCanvas:true}, ()=>{
+              this.props.mountFabric(this.fabricCanvas, oImg, h, w)
+            })
+      })
     
   }
 
@@ -59,15 +59,13 @@ class Canvas extends Component {
   }
 
 
-  render() {
+  render() {              
+            
     return (
-      <ul>{(this.state.readyCanvas) ?
-          (<canvas ref={this.props.canvasId}
-      id={this.props.canvasId} styles={{"display":"none"}}/>) : (
-      <canvas ref={this.props.canvasId}
-      id={this.props.canvasId}/>)
-        
-      }</ul>
+      <ul><canvas ref={this.props.canvasId}
+        id={this.props.canvasId}
+
+         /></ul>
 
 
     )

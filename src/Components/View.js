@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { BrowserRouter as Router,
+import { BrowserRouter as Router, Redirect,
 	Route, Link, Switch } from "react-router-dom";
 
 import { fabric } from 'fabric';
@@ -36,19 +36,36 @@ class View extends Component {
 	  };
 
 	  this.mountFabric = this.mountFabric.bind(this)
+	  this.imgChunk = this.imgChunk.bind(this)
+	  this.rteChunk = this.rteChunk.bind(this)
 	  
 	}
 
 
 
 	componentDidMount(){
-    	var sortedPages = sortByKey(this.props.data, "pageNum")
-    	this.imgChunk(sortedPages)
+		var sortedPages = sortByKey(this.props.data, "pageNum")
+
+    	//Preload images and routes before render
+
     	this.rteChunk(sortedPages)
+    	this.imgChunk(sortedPages)
 	}
 
-	mountFabric(fabricInstance){
+	componentDidUpadate(){
+
+    	this.fabricCanvas.renderAll()
+	}
+
+	mountFabric(fabricInstance, oImg, h, w){
 		this.fabricCanvas = fabricInstance
+
+        oImg.scaleToHeight(h)
+        oImg.scaleToWidth(w)
+
+		this.fabricCanvas.add(oImg)
+
+		this.fabricCanvas.renderAll()
 	}
 
 	imgChunk(sortedPages){
@@ -64,70 +81,65 @@ class View extends Component {
 		        </GridListTile>)
 	    		    }
 	    		)
-		this.setState({imagesReady: imgs})
+		
 		}
+		this.setState({imagesReady: imgs})
 	}
 	rteChunk(sortedPages){
 		var rtes = []
 		{sortedPages.map((obj, idx) =>{
+			
+
 	    	rtes.push(<Route key={idx.toString()}
-	    		path={"/page/" + idx.toString()}>
-	    		<Canvas
-	    			canvasId={obj["item"]} canvasOpts={{
-				      selection:false,
-				    }}
-				    src={obj["item"]}
-				    mountFabric={this.mountFabric}
-				/>
-      			</Route>)
+	    		path={"/page/" + idx.toString()}
+	    		render={()=><Canvas
+		    			canvasId={obj["item"]} canvasOpts={{
+					      selection:false,
+					    }}
+					    src={obj["item"]}
+					    mountFabric={this.mountFabric}
+					/>}
+      			/>)
 	    		    }
 	    		)
 			}
+
 		this.setState({routesReady: rtes})
 		
 	}
 
+	renderMain(){
+		return (<Fragment>
+	    <ImageList>
+		{/* Each image is a link */}
+	    {(this.state.imagesReady) ?
+	    	(this.state.imagesReady) : (<ul/>)
+	    
+		}
+		</ImageList>
+		<ViewList>
+
+		<Switch>
+		<Route exact path="/" render={() => (
+			  <Redirect to="/page/0"/>
+			)}/>
+
+		{/* Routes for each link*/}
+        {(this.state.routesReady.length==this.props.data.length) ?
+        	(this.state.routesReady) : (<ul/>)
+        
+    	}
+			
+	    </Switch>
+	    </ViewList>
+	    </Fragment>)
+	}
 
     render() {
-    	//Preload images and routes before render
-
+    	var renderMain = this.renderMain()
     	//Images and routes are in memory, we can render
 	    return (
-
-	    	<Router>
-	    	<div>
-	    	<Switch>
-			{/* Redirect to the first page*/}
-			<Route exact path="/">
-			    <Link to={"/page/0"}>Open</Link>
-			</Route>
-			<Route path="/page">
-			<Fragment>
-		    <ImageList>
-			{/* Each image is a link */}
-		    {(this.state.imagesReady) ?
-		    	(this.state.imagesReady) : (<ul/>)
-		    
-			}
-			</ImageList>
-			<ViewList>
-
-			<Switch>
-
-
-			{/* Routes for each link*/}
-	        {(this.state.routesReady) ?
-	        	(this.state.routesReady) : (<ul/>)
-	        
-	    	}
-				
-		    </Switch>
-		    </ViewList>
-		    </Fragment>
-		    </Route>
-		    </Switch>
-		    </div>
-		    </Router>
+	    	[renderMain]
     );
   }
 }
