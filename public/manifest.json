@@ -1,9 +1,9 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Paginated Canvas",
+  "name": "Paginated canvases with fabricjs and materials UI 3",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/lg/57/pages_1f5d0.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
