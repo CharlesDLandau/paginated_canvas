@@ -62,6 +62,10 @@ class View extends Component {
 
         oImg.scaleToHeight(h)
         oImg.scaleToWidth(w)
+        oImg.selectable = false
+        oImg.hasControls = false
+        oImg.hasBorders = false
+        oImg.evented = false
 
 		this.fabricCanvas.add(oImg)
 

@@ -45,6 +45,9 @@ class Canvas extends Component {
       {...this.props.canvasOpts,
         height: h,
         width: w,
+        selectable:false,
+        evented:false,
+        hasControls:false,
       })
 
     fabric.Image.fromURL(this.props.src, (oImg)=>{
