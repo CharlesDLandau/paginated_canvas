@@ -12,18 +12,19 @@ const styles = theme => ({
   fullHeightList: {
   },  
   drawer: {
-    backgroundColor: "#B8E6FF",
     marginLeft: 200,
+    backgroundColor: "lightGrey",
   },
   drawerControl: {
   	display: 'flex',
+    backgroundColor: "lightGrey",
   	flexWrap: 'wrap',
   	justifyContent: 'space-around',
-  	overflow: 'hidden',
+  	overflowX: 'hidden'
   },
   imageItem: {
-  	width: theme.spacing.unit*15,
-  	height: theme.spacing.unit*20,
+  	width: 'auto',
+  	height: 'auto',
   	border: 'solid',
   	borderColor: '#262626'
   }, 

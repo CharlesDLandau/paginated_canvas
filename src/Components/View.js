@@ -120,6 +120,10 @@ class View extends Component {
 		<ViewList>
 
 		<Switch>
+		<div style={{
+        position: 'absolute', left: '50%', top: '50%',
+        transform: 'translate(-50%, -50%)'
+    	}}> 
 		<Route exact path="/" render={() => (
 			  <Redirect to="/page/0"/>
 			)}/>
@@ -129,7 +133,7 @@ class View extends Component {
         	(this.state.routesReady) : (<ul/>)
         
     	}
-			
+		</div>
 	    </Switch>
 	    </ViewList>
 	    </Fragment>)
